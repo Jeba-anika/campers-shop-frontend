@@ -56,6 +56,25 @@ const products = [
     specifications: [{}],
     extraInfo: [{}],
   },
+  {
+    _id: crypto.randomUUID(),
+    categoryId: "01",
+    productName: "Sirac Plus Backpack 2",
+    brand: "Lowe Alpine",
+    price: 22400,
+    soldCount: 4,
+    isAvailable: true,
+    productImagesLink: [
+      {
+        altText: "Backpack",
+        url: "https://adventureshop.mt/cdn/shop/files/2020301_1292_E460.jpg?v=1715590709&width=1500",
+      },
+    ],
+    description: "",
+    features: [],
+    specifications: [{}],
+    extraInfo: [{}],
+  },
 ];
 import { Button, Card, Col, Row } from "antd";
 
@@ -64,6 +83,7 @@ const { Meta } = Card;
 const BestSelling = () => {
   return (
     <div className="py-10 px-4 bg-secondary">
+      <h1 className="text-center my-4 text-2xl">Our Best Selling Items</h1>
       <Row justify="center" align="middle" gutter={24}>
         {products.map((product) => (
           <Col

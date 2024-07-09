@@ -1,9 +1,9 @@
 import { Button, Carousel } from "antd";
 import { motion } from "framer-motion";
-import Banner1 from "../assets/banner-1.png";
-import Banner2 from "../assets/banner-2.png";
-import Banner3 from "../assets/banner-3.png";
-import Banner4 from "../assets/banner-4.png";
+import Banner1 from "../../assets/banner-1.png";
+import Banner2 from "../../assets/banner-2.png";
+import Banner3 from "../../assets/banner-3.png";
+import Banner4 from "../../assets/banner-4.png";
 const Hero = () => {
   const backgroundStyle = (url: string) => {
     return {

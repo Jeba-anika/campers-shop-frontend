@@ -1,6 +1,8 @@
-import BestSelling from "../components/BestSelling";
-import Hero from "../components/Hero";
-import Navbar from "../components/Navbar";
+import BestSelling from "../components/Homepage/BestSelling";
+import CategorySection from "../components/Homepage/CategorySection";
+import Featured from "../components/Homepage/Featured";
+import Hero from "../components/Homepage/Hero";
+import Navbar from "../components/Homepage/Navbar";
 
 const Homepage = () => {
   return (
@@ -8,6 +10,8 @@ const Homepage = () => {
       <Navbar />
       <Hero />
       <BestSelling />
+      <CategorySection />
+      <Featured />
     </div>
   );
 };
