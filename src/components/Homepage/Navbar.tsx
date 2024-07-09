@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 const Navbar = () => {
   return (
-    <div className="flex justify-around items-center h-[100px] bg-neutral">
+    <div className="flex justify-around items-center h-[80px] bg-neutral">
       <div className="flex gap-3 justify-center items-center">
         <img
           className="size-12 rounded-full"

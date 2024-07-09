@@ -1,3 +1,4 @@
+import BestSelling from "../components/BestSelling";
 import Hero from "../components/Hero";
 import Navbar from "../components/Navbar";
 
@@ -6,6 +7,7 @@ const Homepage = () => {
     <div>
       <Navbar />
       <Hero />
+      <BestSelling />
     </div>
   );
 };
