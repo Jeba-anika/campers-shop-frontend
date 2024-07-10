@@ -1,3 +1,4 @@
+import Footer from "../components/Footer";
 import BestSelling from "../components/Homepage/BestSelling";
 import CategorySection from "../components/Homepage/CategorySection";
 import Featured from "../components/Homepage/Featured";
@@ -12,6 +13,7 @@ const Homepage = () => {
       <BestSelling />
       <CategorySection />
       <Featured />
+      <Footer />
     </div>
   );
 };
