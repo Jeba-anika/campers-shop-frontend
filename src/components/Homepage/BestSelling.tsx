@@ -76,9 +76,8 @@ const products = [
     extraInfo: [{}],
   },
 ];
-import { Button, Card, Col, Row } from "antd";
-
-const { Meta } = Card;
+import { Button, Col, Row } from "antd";
+import ProductCard from "../ProductCard";
 
 const BestSelling = () => {
   return (
@@ -95,21 +94,7 @@ const BestSelling = () => {
             lg={6}
             xl={6}
           >
-            <Card
-              hoverable
-              //style={{ width: 240 }}
-              cover={
-                <img alt="example" src={product.productImagesLink[0].url} />
-              }
-            >
-              <Meta
-                title={product.productName}
-                description={`$${product.price}`}
-              />
-              <div className="my-4">
-                <Button>See Details</Button>
-              </div>
-            </Card>
+            <ProductCard imgHeight={300} imgWidth={200} product={product} />
           </Col>
         ))}
       </Row>

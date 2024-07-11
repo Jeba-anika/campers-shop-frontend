@@ -1,9 +1,15 @@
-import Homepage from "./pages/Homepage";
+import { Outlet } from "react-router-dom";
+import Footer from "./components/Footer";
+import Navbar from "./components/Homepage/Navbar";
 
 function App() {
   return (
     <>
-      <Homepage />
+      <Navbar />
+      <div className="min-h-screen">
+        <Outlet />
+      </div>
+      <Footer />
     </>
   );
 }

@@ -10,12 +10,39 @@ const productApi = baseApi.injectEndpoints({
       }),
     }),
     getProducts: builder.query({
-      query: () => ({
-        url: "/",
+      query: (filters) => {
+        console.log(filters);
+        let url = "/products?";
+        if (filters.searchTerm) {
+          url = url + `searchTerm=${filters.searchTerm}&`;
+        }
+        if (filters.minPrice !== null) {
+          url = url + `minPrice=${filters.minPrice}&`;
+        }
+        if (filters.maxPrice !== null) {
+          url = url + `maxPrice=${filters.maxPrice}&`;
+        }
+        if (filters.sort) {
+          url = url + `sort=${filters.sort}`;
+        }
+
+        return {
+          url,
+          method: "GET",
+        };
+      },
+    }),
+    getProduct: builder.query({
+      query: (productId) => ({
+        url: `/products/${productId}`,
         method: "GET",
       }),
     }),
   }),
 });
 
-export const { useCreateProductMutation, useGetProductsQuery } = productApi;
+export const {
+  useCreateProductMutation,
+  useGetProductsQuery,
+  useGetProductQuery,
+} = productApi;
