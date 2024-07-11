@@ -38,6 +38,12 @@ const productApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getBestSellingProducts: builder.query({
+      query: () => ({
+        url: `/products/best-selling`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -45,4 +51,5 @@ export const {
   useCreateProductMutation,
   useGetProductsQuery,
   useGetProductQuery,
+  useGetBestSellingProductsQuery,
 } = productApi;

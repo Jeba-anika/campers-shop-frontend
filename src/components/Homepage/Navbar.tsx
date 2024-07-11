@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 const Navbar = () => {
   return (
-    <div className="flex justify-around items-center h-[80px] bg-neutral">
+    <div className="flex sm:flex-row flex-col justify-around items-center h-[100px] sm:h-[80px] bg-neutral">
       <Link to="/" className="flex gap-3 justify-center items-center">
         <img
           className="size-12 rounded-full"
@@ -18,10 +18,16 @@ const Navbar = () => {
         >
           Products
         </Link>
-        <Link className="hover:border hover:border-highlight hover:rounded p-2">
+        <Link
+          className="hover:border hover:border-highlight hover:rounded p-2"
+          to="/about"
+        >
           About Us
         </Link>
-        <Link className="hover:border hover:border-highlight hover:rounded p-2">
+        <Link
+          className="hover:border hover:border-highlight hover:rounded p-2"
+          to="/"
+        >
           About Us
         </Link>
       </div>
