@@ -76,7 +76,7 @@
 //     extraInfo: [{}],
 //   },
 // ];
-import { Button, Col, Row, Spin } from "antd";
+import { Col, Row, Spin } from "antd";
 import { useGetBestSellingProductsQuery } from "../../redux/features/products/productApi";
 import ProductCard from "../ProductCard";
 
@@ -86,9 +86,9 @@ const BestSelling = () => {
     return <Spin fullscreen />;
   }
   return (
-    <div className="py-10 px-4 bg-secondary">
+    <div className="py-10 px-10 bg-secondary">
       <h1 className="text-center my-4 text-2xl">Our Best Selling Items</h1>
-      <Row justify="center" align="middle" gutter={24}>
+      <Row justify="center" align="middle" gutter={[24, 24]}>
         {data?.data?.map((product: object) => (
           <Col
             key={product._id}
@@ -103,9 +103,9 @@ const BestSelling = () => {
           </Col>
         ))}
       </Row>
-      <div className="flex justify-center my-5">
+      {/* <div className="flex justify-center my-5">
         <Button>See More</Button>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -128,6 +128,8 @@ const Products = () => {
             style={{ width: 200 }}
           />
         </div>
+
+        {/* --------------------product cards-------------------------- */}
         <div className="flex gap-5 justify-center items-center flex-wrap">
           {data?.data.map((item) => (
             <ProductCard

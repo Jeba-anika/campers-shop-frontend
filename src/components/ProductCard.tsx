@@ -1,4 +1,4 @@
-import { Button, Card, Image } from "antd";
+import { Button, Card } from "antd";
 import { Link } from "react-router-dom";
 
 const { Meta } = Card;
@@ -14,10 +14,10 @@ const ProductCard = ({
   return (
     <Card
       hoverable
-      className="min-h-max"
       cover={
-        <Image
-          className={`min-h-[${imgHeight}px] w-[${imgWidth}px]`}
+        <img
+          //className={`h-[${imgHeight}px] max-h-[300px] min-h-[300px] w-[${imgWidth}px max-w-[300px] min-w-[300px] `}
+          className={`h-[${imgHeight}px] w-[${imgWidth}px]`}
           alt={product?.productImagesLink[0].altText}
           src={product?.productImagesLink[0].url}
         />
