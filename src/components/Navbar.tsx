@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import logo from "../assets/logo.png";
 const Navbar = () => {
   return (
     <div className="flex sm:flex-row flex-col justify-around items-center h-[100px] sm:h-[80px] bg-neutral">
@@ -17,6 +17,12 @@ const Navbar = () => {
           to="/products"
         >
           Products
+        </Link>
+        <Link
+          className="hover:border hover:border-highlight hover:rounded p-2"
+          to="/product-management"
+        >
+          Manage Products
         </Link>
         <Link
           className="hover:border hover:border-highlight hover:rounded p-2"

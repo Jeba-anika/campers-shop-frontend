@@ -1,5 +1,6 @@
-import { Button, Card } from "antd";
+import { Card } from "antd";
 import { Link } from "react-router-dom";
+import CSButton from "./common/CSButton";
 
 const { Meta } = Card;
 const ProductCard = ({
@@ -26,7 +27,8 @@ const ProductCard = ({
       <Meta title={product?.productName} description={`$${product.price}`} />
       <div className="my-4">
         <Link to={`/products/${product?._id}`}>
-          <Button>See Details</Button>
+          {/* <Button>See Details</Button> */}
+          <CSButton styles="px-3 py-2">See Details</CSButton>
         </Link>
       </div>
     </Card>

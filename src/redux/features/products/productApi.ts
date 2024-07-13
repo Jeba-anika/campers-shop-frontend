@@ -13,17 +13,19 @@ const productApi = baseApi.injectEndpoints({
       query: (filters) => {
         console.log(filters);
         let url = "/products?";
-        if (filters.searchTerm) {
-          url = url + `searchTerm=${filters.searchTerm}&`;
-        }
-        if (filters.minPrice !== null) {
-          url = url + `minPrice=${filters.minPrice}&`;
-        }
-        if (filters.maxPrice !== null) {
-          url = url + `maxPrice=${filters.maxPrice}&`;
-        }
-        if (filters.sort) {
-          url = url + `sort=${filters.sort}`;
+        if (filters) {
+          if (filters?.searchTerm) {
+            url = url + `searchTerm=${filters?.searchTerm}&`;
+          }
+          if (filters?.minPrice !== null) {
+            url = url + `minPrice=${filters?.minPrice}&`;
+          }
+          if (filters?.maxPrice !== null) {
+            url = url + `maxPrice=${filters?.maxPrice}&`;
+          }
+          if (filters?.sort) {
+            url = url + `sort=${filters?.sort}`;
+          }
         }
 
         return {
