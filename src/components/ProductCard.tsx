@@ -25,10 +25,10 @@ const ProductCard = ({
       }
     >
       <Meta title={product?.productName} description={`$${product.price}`} />
-      <div className="my-4">
+      <div className="my-3">
         <Link to={`/products/${product?._id}`}>
           {/* <Button>See Details</Button> */}
-          <CSButton styles="px-3 py-2">See Details</CSButton>
+          <CSButton styles="px-3 py-2 rounded-md w-full">See Details</CSButton>
         </Link>
       </div>
     </Card>

@@ -8,6 +8,7 @@ const productApi = baseApi.injectEndpoints({
         method: "POST",
         body: productData,
       }),
+      invalidatesTags: ["products"],
     }),
     getProducts: builder.query({
       query: (filters) => {
@@ -33,6 +34,7 @@ const productApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["products"],
     }),
     getProduct: builder.query({
       query: (productId) => ({
@@ -46,6 +48,19 @@ const productApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getFeaturedProducts: builder.query({
+      query: () => ({
+        url: `/products/featured`,
+        method: "GET",
+      }),
+    }),
+    deleteProduct: builder.mutation({
+      query: (productId) => ({
+        url: `/products/${productId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["products"],
+    }),
   }),
 });
 
@@ -54,4 +69,6 @@ export const {
   useGetProductsQuery,
   useGetProductQuery,
   useGetBestSellingProductsQuery,
+  useDeleteProductMutation,
+  useGetFeaturedProductsQuery,
 } = productApi;

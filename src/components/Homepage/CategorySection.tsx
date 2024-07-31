@@ -1,42 +1,22 @@
-import { Col, Row } from "antd";
+import { Col, Row, Spin } from "antd";
 import { motion } from "framer-motion";
-
-const categories = [
-  {
-    _id: crypto.randomUUID(),
-    categoryName: "Backpack",
-    image:
-      "https://adventureshop.mt/cdn/shop/files/2020301_1292_E460.jpg?v=1715590709&width=1500",
-  },
-  {
-    _id: crypto.randomUUID(),
-    categoryName: "Backpack",
-    image:
-      "https://adventureshop.mt/cdn/shop/files/2020301_1292_E460.jpg?v=1715590709&width=1500",
-  },
-  {
-    _id: crypto.randomUUID(),
-    categoryName: "Backpack",
-    image:
-      "https://adventureshop.mt/cdn/shop/files/2020301_1292_E460.jpg?v=1715590709&width=1500",
-  },
-  {
-    _id: crypto.randomUUID(),
-    categoryName: "Backpack",
-    image:
-      "https://adventureshop.mt/cdn/shop/files/2020301_1292_E460.jpg?v=1715590709&width=1500",
-  },
-];
+import { Link } from "react-router-dom";
+import { useGetCategoriesQuery } from "../../redux/features/categories/categoryApi";
+import { TCategory } from "../../types/category/category.types";
 
 const CategorySection = () => {
+  const { data: categories, isLoading } = useGetCategoriesQuery(undefined);
+  if (isLoading) {
+    return <Spin fullscreen />;
+  }
   return (
-    <div className="py-10">
+    <div className="pt-10">
       <h1 className="text-center my-6 text-2xl text-highlight">
         Explore Popular Categories
       </h1>
-      <div className="bg-tertiary m-10 rounded-xl py-14">
-        <Row justify="center" align="middle" gutter={24}>
-          {categories.map((category) => (
+      <div className="bg-tertiary m-10 rounded-xl py-8">
+        <Row justify="center" align="middle">
+          {categories?.data.map((category: TCategory) => (
             <Col
               key={category._id}
               className="gutter-row"
@@ -46,23 +26,6 @@ const CategorySection = () => {
               lg={6}
               xl={6}
             >
-              {/* <motion.div
-              whileHover={{ scale: 1.1 }}
-              style={{
-                backgroundImage: `url(${category.image})`,
-                height: "250px",
-                backgroundSize: "cover",
-                width: "250px",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-              className="flex items-end rounded-ss-2xl rounded-br-2xl"
-            >
-              <div className="p-8">
-                <h3 className="text-3xl">{category.categoryName}</h3>
-                <Button>Shop Now</Button>
-              </div>
-            </motion.div> */}
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 className="flex justify-center items-center"
@@ -72,9 +35,14 @@ const CategorySection = () => {
                     className="rounded-full w-[150px] h-[150px]"
                     src={category.image}
                   />
-                  <h2 className="text-center hover:underline my-4">
-                    {category.categoryName}
-                  </h2>
+                  <Link
+                    to={`/products?category=${category.categoryName}`}
+                    className="text-center"
+                  >
+                    <div className="hover:underline my-4 text-primary font-bold">
+                      {category.categoryName}
+                    </div>
+                  </Link>
                 </div>
               </motion.div>
             </Col>

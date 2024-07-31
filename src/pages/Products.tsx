@@ -2,12 +2,15 @@ import type { MenuProps, SliderSingleProps } from "antd";
 import { Button, Input, Menu, Slider, Spin } from "antd";
 import type { SearchProps } from "antd/es/input/Search";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useGetProductsQuery } from "../redux/features/products/productApi";
 const { Search } = Input;
 type MenuItem = Required<MenuProps>["items"][number];
 
 const Products = () => {
+  const [searchParams] = useSearchParams();
+  console.log(searchParams.get("category"));
   const [filters, setFilters] = useState<{
     searchTerm: null | string;
     maxPrice: null | number;
