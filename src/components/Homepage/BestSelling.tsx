@@ -81,7 +81,7 @@ import { Link } from "react-router-dom";
 import { useGetBestSellingProductsQuery } from "../../redux/features/products/productApi";
 import { TProduct } from "../../types/product/product.types";
 import ProductCard from "../ProductCard";
-import CSButton from "./../common/CSButton";
+import SectionHeading from "./SectionHeading";
 
 const BestSelling = () => {
   const { data, isLoading, isError } =
@@ -89,32 +89,39 @@ const BestSelling = () => {
   if (isError) {
     return <div className="text-center pt-10">Some Error Occurred!</div>;
   }
-  if (isLoading) {
-    return <Spin fullscreen />;
-  }
+
   return (
     <div className="pt-10 px-10 ">
-      <h1 className="text-center my-4 text-2xl text-primary mb-10">
-        Our Best Selling Items
-      </h1>
-      <Row justify="center" align="middle" gutter={[24, 24]}>
-        {data?.data?.map((product: TProduct) => (
-          <Col
-            key={product._id}
-            className="gutter-row"
-            xs={24}
-            sm={12}
-            md={12}
-            lg={6}
-            xl={6}
+      <SectionHeading styles="mb-10">Our Best Selling Items</SectionHeading>
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <Spin />;
+        </div>
+      ) : (
+        <>
+          <Row justify="center" align="middle" gutter={[24, 24]}>
+            {data?.data?.map((product: TProduct) => (
+              <Col
+                key={product._id}
+                className="gutter-row"
+                xs={24}
+                sm={12}
+                md={12}
+                lg={6}
+                xl={6}
+              >
+                <ProductCard imgHeight={280} imgWidth={300} product={product} />
+              </Col>
+            ))}
+          </Row>
+          <Link
+            to="/products"
+            className="flex justify-center mt-5 hover:font-bold"
           >
-            <ProductCard imgHeight={280} imgWidth={300} product={product} />
-          </Col>
-        ))}
-      </Row>
-      <Link to="/products" className="flex justify-center mt-5">
-        <CSButton styles={`px-2 py-3`}>See More</CSButton>
-      </Link>
+            See More
+          </Link>
+        </>
+      )}
     </div>
   );
 };

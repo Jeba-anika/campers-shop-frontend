@@ -1,5 +1,6 @@
 import { Card } from "antd";
 import { Link } from "react-router-dom";
+import { TProduct } from "../types/product/product.types";
 import CSButton from "./common/CSButton";
 
 const { Meta } = Card;
@@ -8,7 +9,7 @@ const ProductCard = ({
   imgHeight,
   imgWidth,
 }: {
-  product: object;
+  product: TProduct;
   imgHeight: number;
   imgWidth: number;
 }) => {
@@ -17,18 +18,22 @@ const ProductCard = ({
       hoverable
       cover={
         <img
-          //className={`h-[${imgHeight}px] max-h-[300px] min-h-[300px] w-[${imgWidth}px max-w-[300px] min-w-[300px] `}
           className={`h-[${imgHeight}px] w-[${imgWidth}px]`}
           alt={product?.productImagesLink[0].altText}
           src={product?.productImagesLink[0].url}
         />
       }
     >
-      <Meta title={product?.productName} description={`$${product.price}`} />
+      <Meta title={product?.productName} />
       <div className="my-3">
-        <Link to={`/products/${product?._id}`}>
-          {/* <Button>See Details</Button> */}
-          <CSButton styles="px-3 py-2 rounded-md w-full">See Details</CSButton>
+        <p className="text-primary text-xl mb-3">${product?.price}</p>
+        <Link
+          className="text-primary hover:text-cs-bg"
+          to={`/products/${product?._id}`}
+        >
+          <CSButton styles="px-3 py-2 rounded-full w-full">
+            See Details
+          </CSButton>
         </Link>
       </div>
     </Card>

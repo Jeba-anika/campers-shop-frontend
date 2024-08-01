@@ -1,9 +1,8 @@
 import { Carousel } from "antd";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import Banner2 from "../../assets/banner-2.png";
 import Banner3 from "../../assets/banner-3.png";
 import Banner4 from "../../assets/banner-4.png";
+import HeroContent from "./HeroContent";
 const Hero = () => {
   const backgroundStyle = (url: string) => {
     return {
@@ -16,84 +15,31 @@ const Hero = () => {
     };
   };
   return (
-    <Carousel autoplay effect="fade">
+    <Carousel autoplay effect="fade" arrows>
       <div>
         <div style={{ ...backgroundStyle(Banner2) }}>
-          <motion.div
-            transition={{
-              ease: "backInOut",
-              duration: 2,
-              delayChildren: 0.5,
-            }}
-            animate={{ y: 100 }}
-            className="text-center"
-          >
-            <h1 className="  text-5xl text-primary">Camping</h1>
-            <p className="text-2xl my-9 text-white md:text-primary">
-              Create your dream campsite with our camping essentials. Under the
-              stars, every night is an adventure waiting to unfold.
-            </p>
-            <Link
-              to="/products"
-              className="border border-neutral text-neutral sm:border-highlight text-xl sm:text-highlight px-5 py-4 hover:border-highlight hover:bg-tertiary hover:text-highlight rounded-lg"
-            >
-              Shop Now
-            </Link>
-          </motion.div>
+          <HeroContent
+            heading={"Camping"}
+            description={
+              "Create your dream campsite with our camping essentials. Under the stars, every night is an adventure waiting to unfold."
+            }
+          />
         </div>
       </div>
       <div>
         <div style={backgroundStyle(Banner3)}>
-          <motion.div
-            transition={{
-              ease: "backInOut",
-              duration: 2,
-              delayChildren: 0.5,
-            }}
-            animate={{ y: 100 }}
-            className=" pt-10 px-10 text-primary text-center"
-          >
-            <h3 className="text-5xl">STABLE | VERSATILE | EASY TO PITCH</h3>
-            <p className="text-2xl my-7">
-              Classic Air 300 Vango's Most Sturdiest AirBeam®
-            </p>
-            <p>
-              Inflatable Tent SHOP NOW MAKE YOUR NEXT CAMPING TRIP STRESS FREE.
-              Classic Instant 300 Easy to Pop Up & Simple to Take Down
-            </p>
-            <Link
-              to="/products"
-              className="border border-neutral text-neutral sm:border-highlight text-xl sm:text-highlight px-5 py-4 hover:border-highlight hover:bg-tertiary hover:text-highlight rounded-lg"
-            >
-              Shop Now
-            </Link>
-          </motion.div>
+          <HeroContent
+            heading="STABLE | VERSATILE | EASY TO PITCH"
+            description="Classic Air 300 Vango's Most Sturdiest AirBeam®"
+          />
         </div>
       </div>
       <div>
         <div style={backgroundStyle(Banner4)}>
-          <motion.div
-            transition={{
-              ease: "backInOut",
-              duration: 2,
-              delayChildren: 0.5,
-            }}
-            animate={{ y: 100 }}
-            className="text-center pt-10 px-10"
-          >
-            <h3 className="text-5xl sm:text-5xl text-neutral sm:text-cs-bg">
-              Gear Up for the Great Outdoors
-            </h3>
-            <p className="text-2xl my-7 text-neutral sm:text-cs-bg">
-              Quality camping equipment for all your wilderness needs.
-            </p>
-            <Link
-              to="/products"
-              className="border border-neutral text-neutral sm:border-highlight text-xl sm:text-highlight px-5 py-4 hover:border-highlight hover:bg-tertiary hover:text-highlight rounded-lg"
-            >
-              Shop Now
-            </Link>
-          </motion.div>
+          <HeroContent
+            heading="Gear Up for the Great Outdoors"
+            description="Quality camping equipment for all your wilderness needs."
+          />
         </div>
       </div>
     </Carousel>
