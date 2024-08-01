@@ -1,6 +1,7 @@
 import type { CollapseProps } from "antd";
-import { Avatar, Collapse, List } from "antd";
+import { Avatar, List } from "antd";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import CSCollapse from "../components/common/CSCollapse";
 
 const About = () => {
   const data = [
@@ -122,12 +123,7 @@ const About = () => {
       <h2 className="text-center font-bold text-3xl mb-10 text-highlight">
         About us
       </h2>
-      <Collapse
-        className="mt-10 bg-tertiary border border-tertiary"
-        items={items}
-        defaultActiveKey={["1"]}
-        //onChange={onChange}
-      />
+      <CSCollapse items={items} />
     </div>
   );
 };
