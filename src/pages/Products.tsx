@@ -60,15 +60,16 @@ const Products = () => {
     console.log(
       "click ",
       e,
-      e.key === sortItems[0].children[0].key ? "-price" : "price"
+      e.key === sortItems[0].children[0].key ? "price" : "-price"
     );
     setFilters({
       ...filters,
-      sort: e.key === sortItems[0]!.children[0].key ? "-price" : "price",
+      sort: e.key === sortItems[0]!.children[0].key ? "price" : "-price",
     });
   };
 
   const onPriceRangeChange = (value: number[]) => {
+    console.log(value);
     setFilters({ ...filters, maxPrice: value[1], minPrice: value[0] });
   };
 

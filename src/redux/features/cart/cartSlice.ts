@@ -1,30 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { TProduct } from "../../../types/product/product.types";
 export type TProductImg = {
   altText: string;
   url: string;
 };
-export type TProduct = {
-  _id: string;
-  category: string;
-  productName: string;
-  brand: string;
-  price: number;
-  stockQuantity: number;
-  soldCount: number;
-  isAvailable: boolean;
-  productImagesLink: TProductImg[];
-  features: object[];
-  specifications: object[];
-  extraInfo?: object[];
-  description: string;
-};
-interface Cart {
+
+export interface TCart {
   cart: {
     product: TProduct;
     quantity: number;
   }[];
 }
-const initialState: Cart = {
+const initialState: TCart = {
   cart: [],
 };
 export const CartSlice = createSlice({
@@ -37,6 +24,21 @@ export const CartSlice = createSlice({
       );
       if (!isExist) {
         state.cart.push(action.payload);
+      } else {
+        const productIndex = state.cart.findIndex(
+          (p) => p.product._id === isExist.product._id
+        );
+        const stockQuantity = state.cart[productIndex].product.stockQuantity;
+        console.log(state.cart[productIndex].quantity);
+        const previousCartQuantity = isExist.quantity;
+        const newCartQuantity = isExist.quantity + action.payload.quantity;
+        state.cart[productIndex] = {
+          ...isExist,
+          quantity:
+            newCartQuantity > stockQuantity
+              ? previousCartQuantity
+              : newCartQuantity,
+        };
       }
     },
     addQuantity: (state, action) => {
@@ -61,9 +63,17 @@ export const CartSlice = createSlice({
       );
       state.cart = remainingProducts;
     },
+    removeAllProducts: (state) => {
+      state.cart = [];
+    },
   },
 });
 
-export const { addToCart, addQuantity, removeProduct, removeQuantity } =
-  CartSlice.actions;
+export const {
+  addToCart,
+  addQuantity,
+  removeProduct,
+  removeQuantity,
+  removeAllProducts,
+} = CartSlice.actions;
 export default CartSlice.reducer;

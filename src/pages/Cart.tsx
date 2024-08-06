@@ -13,7 +13,7 @@ const Cart = () => {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="flex justify-center py-10 ">
+    <div className="flex justify-center py-10 text-primary">
       <div>
         <h2 className="text-3xl mb-5 text-center">Shopping Cart</h2>
         {cart.length > 0 ? (
@@ -89,7 +89,9 @@ const Cart = () => {
             </div>
             <div className="text-center">
               <Link to="/checkout">
-                <CSButton styles="px-8 py-4">Place Order</CSButton>
+                <CSButton styles="px-8 py-4 hover:text-cs-bg rounded">
+                  Place Order
+                </CSButton>
               </Link>
             </div>
           </div>

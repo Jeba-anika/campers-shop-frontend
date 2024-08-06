@@ -152,7 +152,7 @@ const ProductManagement = () => {
     });
   };
 
-  const onAddProductSubmit: FormProps<FieldType>["onFinish"] = async (
+  const handleAddProductSubmit: FormProps<FieldType>["onFinish"] = async (
     values
   ) => {
     const formData = new FormData();
@@ -164,6 +164,7 @@ const ProductManagement = () => {
       price: Number(values.price),
       stockQuantity: Number(values.stockQuantity),
     };
+    console.log(product);
     formData.append("data", JSON.stringify(product));
     fileList.forEach((file) => {
       if (file.originFileObj) {
@@ -193,6 +194,14 @@ const ProductManagement = () => {
   };
 
   const handleCategoryChange = (value: string) => {
+    // console.log(
+    //   categories?.data?.find((category) => category._id === selectedCategoryId)
+    //     ? categories?.data?.find(
+    //         (category) => category._id === selectedCategoryId
+    //       ).categoryName
+    //     : ""
+    // );
+
     const category = categories?.data?.find(
       (category) => category.categoryName === value
     );
@@ -242,7 +251,7 @@ const ProductManagement = () => {
               wrapperCol={{ span: 18 }}
               style={{ maxWidth: 600 }}
               initialValues={{ remember: true }}
-              onFinish={onAddProductSubmit}
+              onFinish={handleAddProductSubmit}
               autoComplete="off"
             >
               <CSInput
@@ -255,13 +264,22 @@ const ProductManagement = () => {
               <Form.Item<FieldType> label="Select Category">
                 <Select
                   style={{ width: 120 }}
-                  onChange={handleCategoryChange}
+                  value={
+                    categories?.data?.find(
+                      (category) => category._id === selectedCategoryId
+                    )
+                      ? categories?.data?.find(
+                          (category) => category._id === selectedCategoryId
+                        ).categoryName
+                      : ""
+                  }
                   options={
                     categories?.data?.map((category) => ({
                       value: category.categoryName,
                       label: category.categoryName,
                     })) || []
                   }
+                  onSelect={handleCategoryChange}
                 />
               </Form.Item>
               <Form.Item<FieldType> label="Product Images">

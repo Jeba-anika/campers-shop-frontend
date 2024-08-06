@@ -1,10 +1,13 @@
 import type { CollapseProps } from "antd";
-import { Collapse, message, Spin } from "antd";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Image, message, Spin } from "antd";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import CSButton from "../components/common/CSButton";
+import CSCollapse from "../components/common/CSCollapse";
 import { addToCart } from "../redux/features/cart/cartSlice";
 import { useGetProductQuery } from "../redux/features/products/productApi";
 import { useAppDispatch } from "../redux/hooks";
+import { TProductImg } from "../types/product/product.types";
 
 const ProductDetail = () => {
   const { productId } = useParams();
@@ -12,6 +15,9 @@ const ProductDetail = () => {
   const { data, isLoading } = useGetProductQuery(productId);
   console.log(data);
   const [quantity, setQuantity] = useState(1);
+  const [selectedProductImg, setSelectedProductImg] = useState(
+    data?.data?.productImagesLink[0]
+  );
   const items: CollapseProps["items"] = [
     {
       key: "1",
@@ -23,9 +29,9 @@ const ProductDetail = () => {
       label: "Features",
       children: (
         <>
-          {data?.data?.features.map((feature) => (
+          {data?.data?.features.map((feature: object) => (
             <p>
-              - {Object.keys(feature)[0]} : {Object.values(feature)}[0]
+              - {Object.keys(feature)[0]} : {Object.values(feature)[0]}
             </p>
           ))}
         </>
@@ -36,18 +42,26 @@ const ProductDetail = () => {
       label: "Specifications",
       children: (
         <>
-          {data?.data?.specifications.map((spec) => (
+          {data?.data?.specifications.map((spec: object) => (
             <p>
-              - {Object.keys(spec)[0]} : {Object.values(spec)}[0]
+              - {Object.keys(spec)[0]} : {Object.values(spec)[0]}
             </p>
           ))}
         </>
       ),
     },
+    {
+      key: "4",
+      label: "Stock Quantity",
+      children: (
+        <p className="text-lg text-center">{data?.data?.stockQuantity}</p>
+      ),
+    },
   ];
-  const onChange = (key: string | string[]) => {
-    console.log(key);
-  };
+
+  useEffect(() => {
+    setSelectedProductImg(data?.data?.productImagesLink[0]);
+  }, [data]);
 
   if (isLoading) {
     return <Spin fullscreen />;
@@ -55,51 +69,65 @@ const ProductDetail = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 p-12">
       <div>
-        <img
-          className="w-[500px] h-[500px]"
-          src={data.data.productImagesLink[0].url}
-        />
+        <div className=" h-[500px] flex justify-center items-center mb-5">
+          <Image className="rounded-lg " src={selectedProductImg?.url} />
+        </div>
+        <div className="flex justify-center items-center gap-4">
+          {data.data.productImagesLink.map((productImg: TProductImg) => (
+            <button onClick={() => setSelectedProductImg(productImg)}>
+              <img
+                className="w-[100px] h-[100px] hover:opacity-30 "
+                src={productImg.url}
+                alt=""
+              />
+            </button>
+          ))}
+        </div>
       </div>
-      <div>
-        <h3 className="text-6xl ">{data?.data?.productName}</h3>
-        <p className="text-highlight text-3xl mt-4">${data?.data?.price}</p>
-        <p className="text-highlight text-xl mt-5">
+      <div className="w-2/3 text-primary">
+        <h3 className="text-4xl mb-3">{data?.data?.productName}</h3>
+        <p>Category: {data?.data?.category?.categoryName}</p>
+        <p className="text-tertiary text-3xl mt-4">$ {data?.data?.price}</p>
+        <p className=" text-xl mt-5">
           <span className="text-cs-ash font-bold">By</span> {data?.data?.brand}
         </p>
-        <div className="flex gap-3 mt-10">
+        <div className="flex gap-3 mt-10  ">
           <button
-            className="border border-cs-ash px-4 py-1 hover:bg-cs-ash rounded text-center"
+            className="border border-tertiary px-4 py-1 hover:bg-tertiary rounded text-center text-primary"
             onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
           >
             -
           </button>
-          <p className="border border-cs-ash px-4 py-1 rounded text-center text-3xl">
+          <p className="border border-primary px-4 py-1 rounded text-center text-3xl text-primary">
             {quantity}
           </p>
           <button
             disabled={data?.data?.stockQuantity <= quantity}
-            className="border border-cs-ash px-4 py-1 hover:bg-cs-ash rounded "
+            className="border border-tertiary px-4 py-1 hover:bg-tertiary rounded text-primary"
             onClick={() => setQuantity(quantity + 1)}
           >
             +
           </button>
+          <CSButton
+            onClick={() => {
+              dispatch(addToCart({ product: data.data, quantity }));
+              message.success("Added to cart!");
+            }}
+            styles="w-full py-3 hover:text-cs-bg rounded"
+          >
+            Add to Cart
+          </CSButton>
         </div>
-        <button
-          //disabled={data?.data?.isAvailable}
-          className="mt-8  w-full border border-cs-ash hover:bg-neutral rounded"
+        <CSButton
           onClick={() => {
             dispatch(addToCart({ product: data.data, quantity }));
             message.success("Added to cart!");
           }}
+          styles="w-full py-2 hover:text-cs-bg rounded mt-4"
         >
-          Add to Cart
-        </button>
-        <Collapse
-          className="mt-10"
-          items={items}
-          defaultActiveKey={["1"]}
-          onChange={onChange}
-        />
+          <Link to="/checkout">Buy it now</Link>
+        </CSButton>
+        <CSCollapse items={items} defaultActiveKey={["1"]} />
       </div>
     </div>
   );

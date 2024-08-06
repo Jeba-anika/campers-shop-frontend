@@ -18,7 +18,8 @@ const ProductCard = ({
       hoverable
       cover={
         <img
-          className={`h-[${imgHeight}px] w-[${imgWidth}px]`}
+          style={{ height: `${imgHeight}px`, minWidth: `${imgWidth}px` }}
+          //className={`h-[${imgHeight}px] w-[${imgWidth}px]`}
           alt={product?.productImagesLink[0].altText}
           src={product?.productImagesLink[0].url}
         />

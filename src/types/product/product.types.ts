@@ -7,7 +7,7 @@ export type TProduct = {
   category: string;
   productName: string;
   brand: string;
-  price: string;
+  price: number;
   stockQuantity: number;
   soldCount: number;
   isAvailable: boolean;

@@ -1,29 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Elements } from "@stripe/react-stripe-js";
 import type { CollapseProps, FormProps } from "antd";
 import { Badge, Collapse, Form, Input, message, Radio } from "antd";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CheckoutForm from "../components/Checkout/CheckoutForm";
 import CSButton from "../components/common/CSButton";
 import CSModal from "../components/common/CSModal";
+import { removeAllProducts } from "../redux/features/cart/cartSlice";
 import {
   useCreatePurchaseMutation,
   useCreateStripePaymentIntentMutation,
 } from "../redux/features/checkout/checkoutApi";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { stripePromise } from "../stripe/stripePromise";
 import { getTotalPrice } from "../utils/getTotalPrice";
 
 const Checkout = () => {
-  const [createStripePaymentIntent] =
-    useCreateStripePaymentIntentMutation(undefined);
-  const [createPurchase] = useCreatePurchaseMutation(undefined);
+  const navigate = useNavigate();
+  const { cart } = useAppSelector((state) => state.cart);
+  const dispatch = useAppDispatch();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({
     id: "1",
     method: "COD",
   });
-
-  const { cart } = useAppSelector((state) => state.cart);
-  console.log(cart);
+  const [isPayWithStripeModalOpen, setIsPayWithStripeModalOpen] =
+    useState(false);
   const [purchaseInfoForStripePayment, setPurchaseInfoForStripePayment] =
     useState({
       clientSecret: "",
@@ -32,9 +34,11 @@ const Checkout = () => {
       totalPrice: getTotalPrice(cart),
       userInfo: { userName: "", email: "", phoneNumber: "", address: "" },
     });
-  const [isPayWithStripeModalOpen, setIsPayWithStripeModalOpen] =
-    useState(false);
+  const [createStripePaymentIntent] =
+    useCreateStripePaymentIntentMutation(undefined);
+  const [createPurchase] = useCreatePurchaseMutation(undefined);
 
+  //-----Checkout form field types-----//
   type FieldType = {
     userName: string;
     email: string;
@@ -42,7 +46,38 @@ const Checkout = () => {
     phoneNumber: string;
   };
 
-  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+  const paymentMethodSelectionCollapseItems: CollapseProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <Radio checked={selectedPaymentMethod.id === "1"}>
+          Cash On Delivery
+        </Radio>
+      ),
+      children: <p>Cash on Delivery</p>,
+      showArrow: false,
+    },
+    {
+      key: "2",
+      label: (
+        <Radio checked={selectedPaymentMethod.id === "2"}>
+          Pay now using Stripe
+        </Radio>
+      ),
+      children: <p>Pay now</p>,
+      showArrow: false,
+    },
+  ];
+
+  const onPaymentMethodChange = (e: string | string[]) => {
+    if (e[0] === "1") {
+      setSelectedPaymentMethod({ id: e[0], method: "COD" });
+    } else if (e[0] === "2") {
+      setSelectedPaymentMethod({ id: e[0], method: "Pay with Stripe" });
+    }
+  };
+
+  const handleCheckout: FormProps<FieldType>["onFinish"] = async (values) => {
     console.log("Success:", values);
     console.log(selectedPaymentMethod);
     if (selectedPaymentMethod.id === "2") {
@@ -73,10 +108,13 @@ const Checkout = () => {
           ...purchaseDetails,
         });
         if (result?.data?.statusCode === 200) {
-          message.success("Payment Successful!");
-        }
-        if (result?.error) {
+          message.success("Purchase Successful!");
+          navigate("/success", { state: cart });
+          dispatch(removeAllProducts());
+        } else if (result?.error instanceof Error) {
           throw new Error(result.error.message);
+        } else {
+          message.error("An unexpected error occurred.");
         }
       } catch (err: any) {
         message.error(err.message);
@@ -84,53 +122,18 @@ const Checkout = () => {
     }
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
-
-  const items: CollapseProps["items"] = [
-    {
-      key: "1",
-      label: (
-        <Radio checked={selectedPaymentMethod.id === "1"}>
-          Cash On Delivery
-        </Radio>
-      ),
-      children: <p>Cash on Delivery</p>,
-      showArrow: false,
-    },
-    {
-      key: "2",
-      label: (
-        <Radio checked={selectedPaymentMethod.id === "2"}>
-          Pay now using Stripe
-        </Radio>
-      ),
-      children: <p>Pay now</p>,
-      showArrow: false,
-    },
-  ];
-  const onPaymentMethodChange = (e: string | string[]) => {
-    if (e[0] === "1") {
-      setSelectedPaymentMethod({ id: e[0], method: "COD" });
-    } else if (e[0] === "2") {
-      setSelectedPaymentMethod({ id: e[0], method: "Pay with Stripe" });
-    }
-  };
-
   const handlePayWithStripe = () => {};
 
-  const appearance = {
-    theme: "stripe",
-  };
-  const option = {
-    appearance,
-  };
-  // const elements = useElements();
+  if (cart.length === 0) {
+    return (
+      <div className="text-center text-primary pt-6">
+        Please add something to your cart for checkout!
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-2 pt-10">
+    <div className="grid grid-cols-2 pt-10 text-primary">
       <CSModal
         title={"Pay Now"}
         isModalOpen={isPayWithStripeModalOpen}
@@ -141,18 +144,17 @@ const Checkout = () => {
         <Elements stripe={stripePromise}>
           <CheckoutForm
             purchaseInfo={purchaseInfoForStripePayment}
-            setSelectedPaymentMethod={setSelectedPaymentMethod}
+            setIsPayWithStripeModalOpen={setIsPayWithStripeModalOpen}
           />
         </Elements>
       </CSModal>
-      <div className="px-16">
+      <div className="ps-32 pe-8">
         <h2 className="text-2xl font-bold mb-5">Contact</h2>
         <Form
           name="basic"
           layout="vertical"
           initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          onFinish={handleCheckout}
           autoComplete="off"
         >
           <Form.Item<FieldType>
@@ -185,20 +187,27 @@ const Checkout = () => {
           >
             <Input size="large" />
           </Form.Item>
-          <Collapse accordion items={items} onChange={onPaymentMethodChange} />
+          <Collapse
+            accordion
+            items={paymentMethodSelectionCollapseItems}
+            onChange={onPaymentMethodChange}
+          />
           <Form.Item wrapperCol={{ offset: 8, span: 16 }} className="mt-4">
-            <CSButton styles={`px-5 py-3`} type="submit">
+            <CSButton
+              styles={`px-5 py-3 hover:text-cs-bg rounded`}
+              type="submit"
+            >
               Submit
             </CSButton>
           </Form.Item>
         </Form>
       </div>
-      <div className="px-10">
+      <div className="px-10 ">
         {cart.map((item) => (
           <div className="grid grid-cols-2 items-center mb-4">
             <div className="flex items-center gap-8">
               <Badge
-                style={{ backgroundColor: "gray" }}
+                style={{ backgroundColor: "#01204e" }}
                 count={item.quantity}
                 showZero
               >
@@ -210,13 +219,13 @@ const Checkout = () => {
               </Badge>
               <p>{item.product.productName}</p>
             </div>
-            <p>${(item.quantity * item.product.price).toFixed(2)}</p>
+            <p>$ {(item.quantity * item.product.price).toFixed(2)}</p>
           </div>
         ))}
 
         <p className="grid grid-cols-2 items-center text-xl font-bold mt-10">
           <span>Total</span>
-          <span>${getTotalPrice(cart)}</span>
+          <span>$ {getTotalPrice(cart)}</span>
         </p>
       </div>
     </div>

@@ -76,7 +76,7 @@
 //     extraInfo: [{}],
 //   },
 // ];
-import { Col, Row, Spin } from "antd";
+import { Spin } from "antd";
 import { Link } from "react-router-dom";
 import { useGetBestSellingProductsQuery } from "../../redux/features/products/productApi";
 import { TProduct } from "../../types/product/product.types";
@@ -99,21 +99,11 @@ const BestSelling = () => {
         </div>
       ) : (
         <>
-          <Row justify="center" align="middle" gutter={[24, 24]}>
+          <div className="flex justify-center items-center gap-6 sm:flex-row flex-col flex-wrap">
             {data?.data?.map((product: TProduct) => (
-              <Col
-                key={product._id}
-                className="gutter-row"
-                xs={24}
-                sm={12}
-                md={12}
-                lg={6}
-                xl={6}
-              >
-                <ProductCard imgHeight={280} imgWidth={300} product={product} />
-              </Col>
+              <ProductCard product={product} imgHeight={250} imgWidth={200} />
             ))}
-          </Row>
+          </div>
           <Link
             to="/products"
             className="flex justify-center mt-5 hover:font-bold"
