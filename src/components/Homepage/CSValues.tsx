@@ -39,6 +39,7 @@ const CSValues = () => {
           <>
             <div className="h-screen flex items-center justify-center sticky top-0">
               <div
+                className="border border-primary"
                 style={{
                   backgroundColor: value.color,
                   width: `calc(${700 + index * 25}px)`,

@@ -20,6 +20,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { cart } = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({
     id: "1",
     method: "COD",
@@ -80,6 +81,7 @@ const Checkout = () => {
   const handleCheckout: FormProps<FieldType>["onFinish"] = async (values) => {
     console.log("Success:", values);
     console.log(selectedPaymentMethod);
+    setIsCheckoutLoading(true);
     if (selectedPaymentMethod.id === "2") {
       const result = await createStripePaymentIntent({
         totalPrice: getTotalPrice(cart),
@@ -92,6 +94,7 @@ const Checkout = () => {
           userInfo: { ...values },
         });
         setIsPayWithStripeModalOpen(true);
+        setIsCheckoutLoading(false);
       }
     } else if (selectedPaymentMethod.id === "1") {
       try {
@@ -111,12 +114,16 @@ const Checkout = () => {
           message.success("Purchase Successful!");
           navigate("/success", { state: cart });
           dispatch(removeAllProducts());
+          setIsCheckoutLoading(false);
         } else if (result?.error instanceof Error) {
+          setIsCheckoutLoading(false);
           throw new Error(result.error.message);
         } else {
+          setIsCheckoutLoading(false);
           message.error("An unexpected error occurred.");
         }
       } catch (err: any) {
+        setIsCheckoutLoading(false);
         message.error(err.message);
       }
     }
@@ -145,6 +152,7 @@ const Checkout = () => {
           <CheckoutForm
             purchaseInfo={purchaseInfoForStripePayment}
             setIsPayWithStripeModalOpen={setIsPayWithStripeModalOpen}
+            cart={cart}
           />
         </Elements>
       </CSModal>
@@ -196,6 +204,7 @@ const Checkout = () => {
             <CSButton
               styles={`px-5 py-3 hover:text-cs-bg rounded`}
               type="submit"
+              isLoading={isCheckoutLoading}
             >
               Submit
             </CSButton>

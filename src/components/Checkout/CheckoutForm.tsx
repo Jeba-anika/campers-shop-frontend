@@ -3,21 +3,35 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import type { FormProps } from "antd";
 import { Form, message } from "antd";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { removeAllProducts } from "../../redux/features/cart/cartSlice";
 import { useCreatePurchaseMutation } from "../../redux/features/checkout/checkoutApi";
+import { useAppDispatch } from "../../redux/hooks";
 import { TProduct } from "../../types/product/product.types";
 import CSButton from "../common/CSButton";
 
 const CheckoutForm = ({
   purchaseInfo,
   setIsPayWithStripeModalOpen,
+  cart,
 }: {
   purchaseInfo: any;
   setIsPayWithStripeModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  cart: {
+    product: TProduct;
+    quantity: number;
+  }[];
 }) => {
+  const [isStripePaymentLoading, setIsStripePaymentLoading] = useState(false);
   const [createPurchase] = useCreatePurchaseMutation(undefined);
   const elements = useElements();
   const stripe = useStripe();
-  const onFinish: FormProps["onFinish"] = async () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleCheckout: FormProps["onFinish"] = async () => {
+    setIsStripePaymentLoading(true);
     try {
       if (!stripe || !elements) {
         throw new Error("Stripe.js has not loaded yet.");
@@ -26,6 +40,7 @@ const CheckoutForm = ({
       if (!card) {
         throw new Error("Card Element not found.");
       }
+
       const payload = await stripe?.createPaymentMethod({
         type: "card",
         card,
@@ -65,6 +80,7 @@ const CheckoutForm = ({
           })
         );
 
+        // LOADING
         const result = await createPurchase({
           ...purchaseDetails,
           productList,
@@ -72,13 +88,19 @@ const CheckoutForm = ({
         if (result?.data?.statusCode === 200) {
           message.success("Payment Successful!");
           setIsPayWithStripeModalOpen(false);
+          setIsStripePaymentLoading(false);
+          navigate("/success", { state: cart });
+          dispatch(removeAllProducts());
         } else if (result?.error instanceof Error) {
+          setIsStripePaymentLoading(false);
           throw new Error(result.error.message);
         } else {
+          setIsStripePaymentLoading(false);
           message.error("An unexpected error occurred.");
         }
       }
     } catch (err: any) {
+      setIsStripePaymentLoading(false);
       message.error(err.message);
     }
   };
@@ -88,7 +110,7 @@ const CheckoutForm = ({
         name="stripe"
         layout="vertical"
         initialValues={{ remember: true }}
-        onFinish={onFinish}
+        onFinish={handleCheckout}
         autoComplete="off"
       >
         <Form.Item className="mt-4 border border-cs-ash rounded p-2">
@@ -110,7 +132,11 @@ const CheckoutForm = ({
           />
         </Form.Item>
         <div className="text-center">
-          <CSButton styles={`px-5 py-1 hover:text-cs-bg rounded`} type="submit">
+          <CSButton
+            styles={`px-5 py-1 hover:text-cs-bg rounded`}
+            type="submit"
+            isLoading={isStripePaymentLoading}
+          >
             Pay
           </CSButton>
         </div>
