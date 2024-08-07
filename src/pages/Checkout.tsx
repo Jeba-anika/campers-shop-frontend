@@ -140,7 +140,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 pt-10 text-primary">
+    <div className="grid md:grid-cols-2 pt-10 text-primary">
       {/* ----------------Stripe payment modal-------------------- */}
       <CSModal
         title={"Pay Now"}
@@ -158,7 +158,7 @@ const Checkout = () => {
         </Elements>
       </CSModal>
       {/* ---------------------------------------------------------------- */}
-      <div className="ps-32 pe-8">
+      <div className="lg:ps-32 lg:pe-8 px-4">
         <h2 className="text-2xl font-bold mb-5">Contact</h2>
         {/* ----------------Contact Info form------------------------------- */}
         <Form
@@ -214,10 +214,10 @@ const Checkout = () => {
           </Form.Item>
         </Form>
       </div>
-      <div className="px-10 ">
+      <div className="lg:px-10 px-4">
         {cart.map((item) => (
-          <div className="grid grid-cols-2 items-center mb-4">
-            <div className="flex items-center gap-8">
+          <div className="grid  grid-cols-3 items-center mb-4 gap-3">
+            <div className="flex items-center gap-8 col-span-2 ">
               <Badge
                 style={{ backgroundColor: "#01204e" }}
                 count={item.quantity}
@@ -235,8 +235,8 @@ const Checkout = () => {
           </div>
         ))}
 
-        <p className="grid grid-cols-2 items-center text-xl font-bold mt-10">
-          <span>Total</span>
+        <p className="grid  grid-cols-3 items-center text-xl font-bold mt-10">
+          <span className="col-span-2 ">Total</span>
           <span>$ {getTotalPrice(cart)}</span>
         </p>
       </div>

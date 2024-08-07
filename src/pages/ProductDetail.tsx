@@ -67,7 +67,7 @@ const ProductDetail = () => {
     return <Spin fullscreen />;
   }
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 p-12">
+    <div className="grid grid-cols-1 lg:grid-cols-2 p-12 gap-7">
       <div>
         <div className=" h-[500px] flex justify-center items-center mb-5">
           <Image className="rounded-lg " src={selectedProductImg?.url} />
@@ -84,7 +84,7 @@ const ProductDetail = () => {
           ))}
         </div>
       </div>
-      <div className="w-2/3 text-primary">
+      <div className="xl:w-2/3 text-primary text-center xl:text-left">
         <h3 className="text-4xl mb-3">{data?.data?.productName}</h3>
         <p>Category: {data?.data?.category?.categoryName}</p>
         <p className="text-tertiary text-3xl mt-4">$ {data?.data?.price}</p>

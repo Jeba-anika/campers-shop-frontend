@@ -5,8 +5,13 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useGetProductsQuery } from "../redux/features/products/productApi";
+import { TProduct } from "../types/product/product.types";
 const { Search } = Input;
-type MenuItem = Required<MenuProps>["items"][number];
+type MenuItem = {
+  key: string;
+  label: string;
+  children?: MenuItem[];
+};
 
 const Products = () => {
   const [searchParams] = useSearchParams();
@@ -21,7 +26,6 @@ const Products = () => {
     maxPrice: null,
     minPrice: null,
     sort: "",
-    //categoryId: null,
   });
   const { data, isLoading } = useGetProductsQuery(filters);
 
@@ -35,21 +39,9 @@ const Products = () => {
   };
 
   const sortItems: MenuItem[] = [
-    // {
-    //   key: "01",
-    //   label: "Categories",
-    //   //icon: <SettingOutlined />,
-    //   children: [
-    //     { key: "9", label: "Option 9" },
-    //     { key: "10", label: "Option 10" },
-    //     { key: "11", label: "Option 11" },
-    //     { key: "12", label: "Option 12" },
-    //   ],
-    // },
     {
       key: "01",
       label: "Sort By",
-      //icon: <SettingOutlined />,
       children: [
         { key: "1", label: "Low to High" },
         { key: "2", label: "High to Low" },
@@ -57,14 +49,17 @@ const Products = () => {
     },
   ];
   const onSortMenuClicked: MenuProps["onClick"] = (e) => {
-    console.log(
-      "click ",
-      e,
-      e.key === sortItems[0].children[0].key ? "price" : "-price"
-    );
+    let sortBy = "price";
+    if (sortItems[0]?.children) {
+      if (e.key === sortItems[0]?.children[0]?.key) {
+        sortBy = "price";
+      } else {
+        sortBy = "-price";
+      }
+    }
     setFilters({
       ...filters,
-      sort: e.key === sortItems[0]!.children[0].key ? "price" : "-price",
+      sort: sortBy,
     });
   };
 
@@ -77,7 +72,7 @@ const Products = () => {
     return <Spin fullscreen />;
   }
   return (
-    <div className="p-8 grid grid-cols-1 sm:grid-cols-4">
+    <div className="p-8 grid grid-cols-1 md:grid-cols-4 gap-3">
       <div className="col-span-1 shadow bg-secondary rounded-xl p-5">
         <div className="flex justify-between">
           <h3>Filter By:</h3>
@@ -135,7 +130,7 @@ const Products = () => {
 
         {/* --------------------product cards-------------------------- */}
         <div className="flex gap-5 justify-center items-center flex-wrap">
-          {data?.data.map((item) => (
+          {data?.data.map((item: TProduct) => (
             <ProductCard
               key={item._id}
               product={item}

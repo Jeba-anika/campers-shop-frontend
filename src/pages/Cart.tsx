@@ -18,24 +18,31 @@ const Cart = () => {
         <h2 className="text-3xl mb-5 text-center">Shopping Cart</h2>
         {cart.length > 0 ? (
           <div className="w-[80vw]">
-            <div className="grid grid-cols-6 ">
+            <div className="sm:grid sm:grid-cols-6 hidden ">
               <p className="col-span-3">Product</p>
               <p>Price</p>
               <p>Quantity</p>
               <p className="text-center">Total</p>
             </div>
-            <hr className="text-cs-ash mt-3" />
+            <hr className="text-cs-ash mt-3 hidden sm:block" />
             {cart.map((product) => (
-              <div className="grid grid-cols-6 mt-3">
-                <div className="flex  gap-3 col-span-3 ">
+              <div className="grid sm:grid-cols-6 grid-cols-1 mt-3 gap-3 sm:gap-0">
+                <div className="flex  gap-3 sm:col-span-3 ">
                   <img
                     className="size-14"
                     src={product?.product?.productImagesLink[0]?.url}
                     alt={product?.product?.productImagesLink[0]?.altText}
                   />
-                  <p>{product?.product?.productName}</p>
+                  <div>
+                    <p>{product?.product?.productName}</p>
+                    <p className="block sm:hidden">
+                      $ {product?.product?.price}
+                    </p>
+                  </div>
                 </div>
-                <div>$ {product?.product?.price}</div>
+                <div className="hidden sm:block">
+                  $ {product?.product?.price}
+                </div>
                 <div>
                   <div className="border border-cs-ash rounded-md p-3 flex justify-around">
                     <button
@@ -65,7 +72,7 @@ const Cart = () => {
                     </button>
                   </div>
                 </div>
-                <div className="text-center">
+                <div className="text-center hidden sm:block">
                   $ {(product?.quantity * product?.product?.price).toFixed(2)}
                 </div>
               </div>
