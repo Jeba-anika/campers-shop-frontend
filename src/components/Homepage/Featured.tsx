@@ -19,7 +19,7 @@ const Featured = () => {
           <Spin />
         </div>
       ) : (
-        <div className="flex flex-col sm:flex-row justify-center gap-8">
+        <div className="flex flex-col sm:flex-row justify-center gap-8 items-center ">
           {data?.data.map((product: TProduct) => (
             <motion.div
               whileHover={{ scale: 1.1 }}

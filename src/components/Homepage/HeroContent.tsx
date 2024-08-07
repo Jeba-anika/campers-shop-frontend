@@ -11,7 +11,7 @@ const HeroContent = ({
       <h1 className="text-3xl  sm:text-5xl text-primary text-center">
         {heading}
       </h1>
-      <p className="text-xl sm:text-2xl text-justify text-primary">
+      <p className="text-xl sm:text-2xl text-center text-primary">
         {description}
       </p>
       <Link

@@ -4,7 +4,7 @@ const values = [
   {
     title: "Integrity at Campers Shop",
     description:
-      "At Campers Shop, integrity is at the heart of everything we do. We believe in being honest, transparent, and ethical to build trust with our customers. We hold ourselves to high standards and take responsibility for our actions. By doing this, we offer top-quality products and services, fostering lasting relationships. Integrity guides our decisions and shows our commitment to excellence in every interaction. It’s more than just a value; it’s our guide to achieving long-term success and earning the respect of our community.",
+      "At Campers Shop, integrity is at the heart of everything we do. We believe in being honest, transparent, and ethical to build trust with our customers. We hold ourselves to high standards and take responsibility for our actions. By doing this, we offer top-quality products and services, fostering lasting relationships. Integrity guides our decisions and shows our commitment to excellence in every interaction. It’s more than just a value; it’s our guide to achieving long-term success.",
     color: "#F6DCAC",
   },
   {
@@ -17,7 +17,7 @@ const values = [
   {
     title: "Quality & Sustainability",
     description:
-      "We are dedicated to offering only the best products. Quality is paramount at Campers Shop, and we ensure that our gear is reliable, durable, and capable of withstanding the rigors of the great outdoors. Our customers can trust that they are getting top-notch products every time. Protecting the environment is a key value for us. We are committed to sustainable practices and eco-friendly products that help preserve nature for future generations. Our efforts ensure that the beauty of the outdoors remains intact for everyone to enjoy.",
+      "We are dedicated to offering only the best products. Quality is paramount at Campers Shop, and we ensure that our gear is reliable, durable, and capable of withstanding the rigors of the great outdoors. Our customers can trust that they are getting top-notch products every time. Protecting the environment is a key value for us. We are committed to sustainable practices and eco-friendly products that help preserve nature for future generations. ",
 
     color: "#e9815b",
   },
@@ -39,17 +39,16 @@ const CSValues = () => {
           <>
             <div className="h-screen flex items-center justify-center sticky top-0">
               <div
-                className="border border-primary"
+                className="border border-primary min-h-fit h-[500px] sm:h-[400px]"
                 style={{
                   backgroundColor: value.color,
                   width: `calc(${700 + index * 25}px)`,
-                  height: "400px",
                   borderRadius: "25px",
                   position: "relative",
                   top: `calc(-5vh + ${index * 50}px)`,
                 }}
               >
-                <div className="flex flex-col items-center justify-center px-14 pt-2 ">
+                <div className="flex flex-col items-center justify-center px-14 py-2 ">
                   <h2 className="text-center font-bold text-2xl mb-10 text-primary">
                     {value.title}
                   </h2>
