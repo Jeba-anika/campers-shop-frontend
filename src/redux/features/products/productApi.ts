@@ -42,6 +42,14 @@ const productApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    updateProduct: builder.mutation({
+      query: ({ productId, updatedProduct }) => ({
+        url: `/products/${productId}`,
+        method: "PUT",
+        body: updatedProduct,
+      }),
+      invalidatesTags: ["products"],
+    }),
     getBestSellingProducts: builder.query({
       query: () => ({
         url: `/products/best-selling`,
@@ -71,4 +79,5 @@ export const {
   useGetBestSellingProductsQuery,
   useDeleteProductMutation,
   useGetFeaturedProductsQuery,
+  useUpdateProductMutation,
 } = productApi;

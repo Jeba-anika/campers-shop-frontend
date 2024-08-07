@@ -2,9 +2,14 @@ export type TProductImg = {
   altText: string;
   url: string;
 };
+export type TCategory = {
+  _id: string;
+  categoryName: string;
+  image: string;
+};
 export type TProduct = {
   _id: string;
-  category: string;
+  category: TCategory;
   productName: string;
   brand: string;
   price: number;
@@ -16,4 +21,5 @@ export type TProduct = {
   specifications: object[];
   extraInfo?: object[];
   description: string;
+  rating: number;
 };

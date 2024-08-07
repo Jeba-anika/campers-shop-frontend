@@ -1,4 +1,4 @@
-import { Card } from "antd";
+import { Card, Rate } from "antd";
 import { Link } from "react-router-dom";
 import { TProduct } from "../types/product/product.types";
 import CSButton from "./common/CSButton";
@@ -19,7 +19,6 @@ const ProductCard = ({
       cover={
         <img
           style={{ height: `${imgHeight}px`, minWidth: `${imgWidth}px` }}
-          //className={`h-[${imgHeight}px] w-[${imgWidth}px]`}
           alt={product?.productImagesLink[0].altText}
           src={product?.productImagesLink[0].url}
         />
@@ -28,6 +27,9 @@ const ProductCard = ({
       <Meta title={product?.productName} />
       <div className="my-3">
         <p className="text-primary text-xl mb-3">${product?.price}</p>
+        <div className="mb-3">
+          <Rate disabled defaultValue={product?.rating} />
+        </div>
         <Link
           className="text-primary hover:text-cs-bg"
           to={`/products/${product?._id}`}

@@ -1,5 +1,5 @@
 import type { CollapseProps } from "antd";
-import { Image, message, Spin } from "antd";
+import { Image, message, Rate, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CSButton from "../components/common/CSButton";
@@ -91,6 +91,9 @@ const ProductDetail = () => {
         <p className=" text-xl mt-5">
           <span className="text-cs-ash font-bold">By</span> {data?.data?.brand}
         </p>
+        <div className="mt-3">
+          <Rate disabled defaultValue={data?.data?.rating} />
+        </div>
         <div className="flex gap-3 mt-10  ">
           <button
             className="border border-tertiary px-4 py-1 hover:bg-tertiary rounded text-center text-primary"

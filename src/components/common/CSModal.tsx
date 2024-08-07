@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal } from "antd";
+import { ReactNode } from "react";
 
 const CSModal = ({
   children,
@@ -7,6 +9,13 @@ const CSModal = ({
   handleOk,
   handleCancel,
   footer,
+}: {
+  children: ReactNode;
+  title: string;
+  isModalOpen: boolean;
+  handleOk?: () => any;
+  handleCancel: () => any;
+  footer: any;
 }) => {
   return (
     <Modal

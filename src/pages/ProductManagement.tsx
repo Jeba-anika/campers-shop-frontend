@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteOutlined } from "@ant-design/icons";
 import type { FormProps, TableProps } from "antd";
 import { Button, Form, Input, message, Select, Space, Spin, Table } from "antd";
-import { UploadFile } from "antd/es/upload/interface";
+import { RcFile, UploadFile } from "antd/es/upload/interface";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import CSButton from "../components/common/CSButton";
 import CSInput from "../components/common/CSInput";
 import CSModal from "../components/common/CSModal";
 import CSTextArea from "../components/common/CSTextArea";
@@ -12,25 +15,27 @@ import {
   useCreateProductMutation,
   useDeleteProductMutation,
   useGetProductsQuery,
+  useUpdateProductMutation,
 } from "../redux/features/products/productApi";
+import { TCategory, TProduct } from "../types/product/product.types";
 
 const { TextArea } = Input;
 
-interface DataType {
-  _id: string;
-  category: { _id: string; categoryName: string; image: string };
-  productName: string;
-  brand: string;
-  price: number;
-  stockQuantity: number;
-  soldCount: number;
-  isAvailable: boolean;
-  features: object[];
-  specifications: object[];
-  extraInfo: object[];
-  description: string;
-  isDeleted: boolean;
-}
+// interface DataType {
+//   _id: string;
+//   category: { _id: string; categoryName: string; image: string };
+//   productName: string;
+//   brand: string;
+//   price: number;
+//   stockQuantity: number;
+//   soldCount: number;
+//   isAvailable: boolean;
+//   features: object[];
+//   specifications: object[];
+//   extraInfo: object[];
+//   description: string;
+//   isDeleted: boolean;
+// }
 const ProductManagement = () => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
@@ -38,52 +43,108 @@ const ProductManagement = () => {
   const { data: categories } = useGetCategoriesQuery(null);
   const [createProduct, { isLoading: isCreateProductLoading }] =
     useCreateProductMutation();
+  const [updateProduct, { isLoading: isUpdateProductLoading }] =
+    useUpdateProductMutation();
   const [deleteProduct, { isLoading: isDeleteProductLoading }] =
     useDeleteProductMutation();
-  //State for product image file list//
+  //---------State for product image file list-------//
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     categories?.data[0]._id || ""
   );
-  const [selectProduct, setSelectedProduct] = useState({});
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
     useState(false);
 
-  const columns: TableProps<DataType>["columns"] = [
+  const productColumns: TableProps<TProduct>["columns"] = [
     {
       title: "Name",
       dataIndex: "productName",
       key: "productName",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <Link to={``}>{text}</Link>,
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      render: (text) => <p>$ {text}</p>,
     },
     {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      render: (_, { category }) => <>{category?.categoryName}</>,
+      render: (_, { category }: TProduct) => <>{category?.categoryName}</>,
+    },
+    {
+      title: "Brand",
+      dataIndex: "brand",
+      key: "brand",
     },
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      render: (_, record: TProduct) => (
         <Space size="middle">
-          <Button
-            onClick={() => {
+          <CSButton
+            styles="px-2 rounded hover:text-cs-bg"
+            onClick={async () => {
               console.log(record);
-              setIsEditProductModalOpen(true);
+              const featureString = record.features.map(
+                (feature) =>
+                  `${Object.keys(feature)[0]}:${Object.values(feature)[0]}`
+              );
+              const specString = record.specifications.map(
+                (spec: any) =>
+                  `${Object.keys(spec)[0]}:${Object.values(spec)[0]}`
+              );
+              const extraInfoString = record?.extraInfo?.map(
+                (info: any) =>
+                  `${Object.keys(info)[0]}:${Object.values(info)[0]}`
+              );
+              const modifiedImageList = [];
+              for (let i = 0; i < record.productImagesLink.length; i++) {
+                const response = await fetch(record.productImagesLink[i].url);
+
+                const blob = await response.blob();
+                const file = new File(
+                  [blob],
+                  record.productImagesLink[i].altText
+                );
+                const rcFile: RcFile = {
+                  ...file,
+                  uid: "-1",
+                  lastModified: file.lastModified,
+                  lastModifiedDate: new Date(file.lastModified),
+                  name: file.name,
+                  size: file.size,
+                  type: file.type,
+                  webkitRelativePath: file.webkitRelativePath,
+                };
+
+                modifiedImageList.push({
+                  uid: rcFile.uid,
+                  lastModifiedDate: new Date(),
+                  name: record.productImagesLink[i].altText,
+                  url: URL.createObjectURL(file),
+                  originFileObj: rcFile,
+                });
+              }
+              console.log(modifiedImageList);
               setSelectedProduct(record);
+              setFileList(modifiedImageList);
+              setSelectedCategoryId(record.category._id);
               form.setFieldsValue(record);
+              form.setFieldValue("features", featureString.toString());
+              form.setFieldValue("specifications", specString.toString());
+              form.setFieldValue("extraInfo", extraInfoString?.toString());
+              setIsEditProductModalOpen(true);
             }}
           >
             Update
-          </Button>
+          </CSButton>
+
           <Button
             onClick={() => {
               setIsConfirmDeleteModalOpen(true);
@@ -98,8 +159,8 @@ const ProductManagement = () => {
     },
   ];
 
-  const data: DataType[] =
-    productData?.data?.map((product: DataType) => ({
+  const products: TProduct[] =
+    productData?.data?.map((product: TProduct) => ({
       key: product._id,
       ...product,
     })) || [];
@@ -107,20 +168,10 @@ const ProductManagement = () => {
   const showAddProductModal = () => {
     setIsAddProductModalOpen(true);
   };
-  const showEditProductModal = () => {
-    setIsEditProductModalOpen(true);
-  };
-
-  const handleAddProductModalOk = () => {
-    setIsAddProductModalOpen(false);
-  };
-  const handleEditProductModalOk = () => {
-    setIsEditProductModalOpen(false);
-  };
 
   const handleEditProductModalCancel = () => {
     setIsEditProductModalOpen(false);
-    setSelectedProduct({});
+    setSelectedProduct(null);
     form.resetFields();
     setFileList([]);
     setSelectedCategoryId("");
@@ -132,19 +183,22 @@ const ProductManagement = () => {
     setSelectedCategoryId("");
   };
 
-  type FieldType = {
+  type ProductFieldType = {
     category?: string;
     productName?: string;
     brand?: string;
     price?: number;
     stockQuantity?: number;
-    features?: object[];
-    specifications?: object[];
-    extraInfo?: object[];
+    features?: string;
+    specifications?: string;
+    extraInfo?: string;
     description?: string;
   };
 
   const transFormStrIntoKeyVal = (str: string) => {
+    if (!str) {
+      return [];
+    }
     return str.split(",").map((feat) => {
       const key = feat.split(":")[0];
       const val = feat.split(":")[1];
@@ -152,37 +206,57 @@ const ProductManagement = () => {
     });
   };
 
-  const handleAddProductSubmit: FormProps<FieldType>["onFinish"] = async (
-    values
-  ) => {
-    const formData = new FormData();
-    const product = {
-      ...values,
-      features: transFormStrIntoKeyVal(values?.features),
-      specifications: transFormStrIntoKeyVal(values?.specifications),
-      category: selectedCategoryId,
-      price: Number(values.price),
-      stockQuantity: Number(values.stockQuantity),
-    };
-    console.log(product);
-    formData.append("data", JSON.stringify(product));
-    fileList.forEach((file) => {
-      if (file.originFileObj) {
-        formData.append("images", file.originFileObj);
+  const handleAddProductSubmit: FormProps<ProductFieldType>["onFinish"] =
+    async (values) => {
+      try {
+        console.log(values);
+        const formData = new FormData();
+        const product = {
+          ...values,
+          features: transFormStrIntoKeyVal(values?.features as string),
+          specifications: transFormStrIntoKeyVal(
+            values?.specifications as string
+          ),
+          extraInfo: transFormStrIntoKeyVal(values?.extraInfo as string),
+          category: selectedCategoryId,
+          price: Number(values.price),
+          stockQuantity: Number(values.stockQuantity),
+        };
+        console.log(product);
+        formData.append("data", JSON.stringify(product));
+        console.log(fileList);
+        fileList.forEach((file) => {
+          console.log(file.originFileObj);
+          if (file.originFileObj) {
+            formData.append("images", file.originFileObj);
+          }
+        });
+        let res: any = {};
+        if (isAddProductModalOpen) {
+          res = await createProduct(formData);
+        } else if (isEditProductModalOpen) {
+          res = await updateProduct({
+            productId: selectedProduct?._id,
+            updatedProduct: formData,
+          });
+        }
+        console.log(res);
+        if (res?.data) {
+          messageApi.success(
+            isAddProductModalOpen ? "Product cretaed!" : "Product Updated"
+          );
+          setIsAddProductModalOpen(false);
+          setIsEditProductModalOpen(false);
+          form.resetFields();
+          setFileList([]);
+          setSelectedCategoryId("");
+        } else {
+          messageApi.error(res?.error?.data?.message);
+        }
+      } catch (err: any) {
+        message.error(err);
       }
-    });
-    const res = await createProduct(formData);
-    console.log(res);
-    if (res?.data) {
-      messageApi.success("Product cretaed!");
-      setIsAddProductModalOpen(false);
-      form.resetFields();
-      setFileList([]);
-      setSelectedCategoryId("");
-    } else {
-      messageApi.error(res?.error?.data?.message);
-    }
-  };
+    };
 
   //function for handling product image upload//
   const handleUploadChange = ({
@@ -203,13 +277,13 @@ const ProductManagement = () => {
     // );
 
     const category = categories?.data?.find(
-      (category) => category.categoryName === value
+      (category: TCategory) => category.categoryName === value
     );
     setSelectedCategoryId(category._id);
   };
 
   const handleDeleteProduct = async () => {
-    const res = await deleteProduct(selectProduct._id);
+    const res: any = await deleteProduct(selectedProduct?._id);
     if (res?.data) {
       messageApi.success("Product Deleted Successfully!");
       setIsConfirmDeleteModalOpen(false);
@@ -225,11 +299,24 @@ const ProductManagement = () => {
       {isLoading ? (
         <Spin fullscreen />
       ) : (
-        <div>
-          <Button className="mb-8" type="primary" onClick={showAddProductModal}>
-            Add Product
-          </Button>
-          <Table columns={columns} dataSource={data} />
+        <div className="text-primary">
+          <h2 className="text-3xl mb-5 text-center">Product Management</h2>
+          <div className="text-end mb-4">
+            <CSButton
+              styles="px-6 py-2 rounded hover:text-cs-bg"
+              onClick={showAddProductModal}
+            >
+              Add Product
+            </CSButton>
+          </div>
+          {/* -----------------product details table------------- */}
+          <Table
+            columns={productColumns}
+            dataSource={products}
+            rowClassName={"text-primary"}
+          />
+          {/* --------------------------------------------------------- */}
+          {/* -----------------Add or Edit product modal--------------- */}
           <CSModal
             title={isAddProductModalOpen ? "Add Product" : "Edit Product"}
             isModalOpen={isAddProductModalOpen || isEditProductModalOpen}
@@ -238,11 +325,6 @@ const ProductManagement = () => {
                 ? handleAddProductModalCancel
                 : handleEditProductModalCancel
             }
-            handleOk={
-              isEditProductModalOpen
-                ? handleAddProductModalOk
-                : handleEditProductModalOk
-            }
             footer={null}
           >
             <Form
@@ -250,7 +332,7 @@ const ProductManagement = () => {
               labelCol={{ span: 6 }}
               wrapperCol={{ span: 18 }}
               style={{ maxWidth: 600 }}
-              initialValues={{ remember: true }}
+              // initialValues={{ remember: true }}
               onFinish={handleAddProductSubmit}
               autoComplete="off"
             >
@@ -261,20 +343,22 @@ const ProductManagement = () => {
                   { required: true, message: "Please input Product Name!" },
                 ]}
               />
-              <Form.Item<FieldType> label="Select Category">
+              <Form.Item<ProductFieldType> label="Select Category">
                 <Select
                   style={{ width: 120 }}
                   value={
                     categories?.data?.find(
-                      (category) => category._id === selectedCategoryId
+                      (category: TCategory) =>
+                        category._id === selectedCategoryId
                     )
                       ? categories?.data?.find(
-                          (category) => category._id === selectedCategoryId
+                          (category: TCategory) =>
+                            category._id === selectedCategoryId
                         ).categoryName
                       : ""
                   }
                   options={
-                    categories?.data?.map((category) => ({
+                    categories?.data?.map((category: TCategory) => ({
                       value: category.categoryName,
                       label: category.categoryName,
                     })) || []
@@ -282,13 +366,13 @@ const ProductManagement = () => {
                   onSelect={handleCategoryChange}
                 />
               </Form.Item>
-              <Form.Item<FieldType> label="Product Images">
+              <Form.Item<ProductFieldType> label="Product Images">
                 <CSUpload
                   fileList={fileList}
                   handleUploadChange={handleUploadChange}
                 />
               </Form.Item>
-              <Form.Item<FieldType>
+              <Form.Item<ProductFieldType>
                 label="Brand"
                 name="brand"
                 rules={[
@@ -297,7 +381,7 @@ const ProductManagement = () => {
               >
                 <Input />
               </Form.Item>
-              <Form.Item<FieldType>
+              <Form.Item<ProductFieldType>
                 label="Description"
                 name="description"
                 rules={[
@@ -360,7 +444,7 @@ const ProductManagement = () => {
 
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button
-                  loading={isCreateProductLoading}
+                  loading={isCreateProductLoading || isUpdateProductLoading}
                   type="primary"
                   htmlType="submit"
                 >
@@ -388,7 +472,7 @@ const ProductManagement = () => {
           >
             <p>
               Are you sure you want to delete the product{" "}
-              {selectProduct?.productName}
+              {selectedProduct?.productName}
             </p>
           </CSModal>
         </div>

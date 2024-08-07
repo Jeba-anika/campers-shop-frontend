@@ -141,6 +141,7 @@ const Checkout = () => {
 
   return (
     <div className="grid grid-cols-2 pt-10 text-primary">
+      {/* ----------------Stripe payment modal-------------------- */}
       <CSModal
         title={"Pay Now"}
         isModalOpen={isPayWithStripeModalOpen}
@@ -156,8 +157,10 @@ const Checkout = () => {
           />
         </Elements>
       </CSModal>
+      {/* ---------------------------------------------------------------- */}
       <div className="ps-32 pe-8">
         <h2 className="text-2xl font-bold mb-5">Contact</h2>
+        {/* ----------------Contact Info form------------------------------- */}
         <Form
           name="basic"
           layout="vertical"
