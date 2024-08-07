@@ -1,7 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PlusOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
 
-const CSUpload = ({ fileList, handleUploadChange }) => {
+const CSUpload = ({
+  fileList,
+  handleUploadChange,
+}: {
+  fileList: any[];
+  handleUploadChange: any;
+}) => {
   return (
     <Upload
       multiple
