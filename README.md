@@ -5,6 +5,7 @@
 --- -->
 
 # Campers Shop ([Live Link](https://campers-shop-mu.vercel.app/))
+Project overview video link: [Link](https://drive.google.com/file/d/1-8rC2T74yvBur4HZduIUw2j3ocXCjbkq/view?usp=sharing)
 
 ## Introduction
 
